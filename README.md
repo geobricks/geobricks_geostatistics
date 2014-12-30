@@ -1,4 +1,4 @@
-geobricks_geostatistics
-=======================
+Geobricks Geostatistics
+====================
 
-Geostatistical library. 
+Geobricks geostatistics library.
