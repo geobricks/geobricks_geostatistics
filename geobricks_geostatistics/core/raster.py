@@ -102,11 +102,9 @@ class Stats():
                 column_filter_code_index = 0
                 column_filter_label_index = 1
 
-                #srcnodatavalue = get_nodata_value(raster_path)
-                # log.info("SRC NODATA!: %s" % srcnodatavalue)
 
+                # Getting srid TODO: probably to apply in the crop process (GIS_raster method)
                 srid = get_srid(raster_path)
-                print srid
 
                 # query DB
                 codes = self.db_spatial.query(query)
@@ -116,7 +114,7 @@ class Stats():
                         code = str(r[column_filter_code_index])
                         label = str(r[column_filter_label_index])
                         # TODO: handle the ST_Transform somehow (i.e. transform the bounding box if srid is different?)
-                        query_srid = "SELECT ST_SRID(geom) FROM gaul1_2015_4326 LIMIT 1;"
+                        #query_srid = "SELECT ST_SRID(geom) FROM gaul1_2015_4326 LIMIT 1;"
                         query_extent = "SELECT ST_AsGeoJSON(ST_Extent(ST_Transform(geom, " + srid + "))) FROM " + from_query + " WHERE " + column_filter + " IN (" + code + ")"
                         query_layer = "SELECT * FROM " + from_query + " WHERE " + column_filter + " IN (" + code + ")"
                         filepath = crop_by_vector_database(raster_path, self.db_spatial, query_extent, query_layer)

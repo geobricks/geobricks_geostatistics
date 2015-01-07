@@ -8,7 +8,7 @@ json_stats = {
                # "uid": "fenix:rice_area1",
                 "workspace": "fenix",
                 "layerName": "rice_area1",
-                "datasource":"geoserver",
+                "datasource": "geoserver",
                 "_name": "optional",
                 "_path": "optional"
         }
