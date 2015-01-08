@@ -99,7 +99,7 @@ class Stats():
                 if "where" in vector_opt['query_condition']:
                     where = vector_opt['query_condition']['where']
                 # query DB
-                codes = self.db_spatial.query(select, from_query, where)
+                codes = self.db_spatial.query_extented(select, from_query, where)
 
                 if codes:
                     for r in codes:
