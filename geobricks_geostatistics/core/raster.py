@@ -65,6 +65,9 @@ class Stats():
             # get raster path
             raster_path = raster["path"]
 
+            # Getting srid TODO: probably to apply in the crop process (GIS_raster method)
+            srid = get_srid(raster_path)
+
             if raster_path is None:
                 log.warn("Raster path is null for", raster)
             else:
@@ -79,20 +82,6 @@ class Stats():
                 opt = opt.replace("{{SCHEMA}}", self.db_spatial.schema)
                 vector_opt = json.loads(opt)
 
-                # retrieve query values
-                select = vector_opt['query_condition']['select']
-                from_query = vector_opt['query_condition']['from']
-                where = None
-                if "where" in vector_opt['query_condition']:
-                    where = vector_opt['query_condition']['where']
-
-                # build query
-                query = "SELECT " + select + " FROM "+ from_query
-                if ( where is not None):
-                    query += " WHERE " + where
-
-                #log.info(query)
-
                 # parsing results
                 # the column filter is used to parse the
                 column_filter = vector_opt['column_filter']
@@ -103,11 +92,14 @@ class Stats():
                 column_filter_label_index = 1
 
 
-                # Getting srid TODO: probably to apply in the crop process (GIS_raster method)
-                srid = get_srid(raster_path)
-
+                # retrieve query values
+                select = vector_opt['query_condition']['select']
+                from_query = vector_opt['query_condition']['from']
+                where = None
+                if "where" in vector_opt['query_condition']:
+                    where = vector_opt['query_condition']['where']
                 # query DB
-                codes = self.db_spatial.query(query)
+                codes = self.db_spatial.query(select, from_query, where)
 
                 if codes:
                     for r in codes:
