@@ -6,11 +6,19 @@ json_stats = {
     "raster": [
         {
                # "uid": "fenix:rice_area1",
-                "workspace": "fenix",
-                "layerName": "rice_area1",
+                "workspace": "workspace",
+                "layerName": "rice_area_3857",
                 "datasource": "geoserver",
                 "_name": "optional",
                 "_path": "optional"
+        },
+        {
+            # "uid": "fenix:rice_area1",
+            "workspace": "workspace",
+            "layerName": "rice_area_4326",
+            "datasource": "storage",
+            "_name": "optional",
+            "_path": "optional"
         }
     ],
     "vector":

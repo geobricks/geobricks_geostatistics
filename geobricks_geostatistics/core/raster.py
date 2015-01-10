@@ -33,6 +33,10 @@ class Stats():
         # Raster
         for raster in json_stats["raster"]:
             raster["path"] = get_raster_path(raster)
+            # turning relative to absolute path if required
+            if not os.path.isabs(raster["path"]):
+                raster["path"] = os.path.abspath(raster["path"])
+
 
         # Vector
         # TODO: make an ENUM somewhere (i.e. database, geojson, etc)
@@ -71,6 +75,9 @@ class Stats():
             if raster_path is None:
                 log.warn("Raster path is null for", raster)
             else:
+
+                print raster_path
+
                 # Query Options
                 vector_opt = json_stats["vector"]["options"]
 
