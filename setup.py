@@ -17,7 +17,7 @@ setup(
         # this is not a real dependendency, it's just passed on the method
         'GeobricksCommon',
         'GeobricksGISRaster',
-        'GeobricksDBMS',
+        'GeobricksSpatialQuery',
     ],
     url='http://pypi.python.org/pypi/GeobricksGISRaster/',
     keywords=['geobricks', 'geoserver', 'gis', 'raster']
