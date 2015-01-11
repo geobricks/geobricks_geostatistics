@@ -96,11 +96,8 @@ class Stats():
                 subcolumn_code = vector["groupby"][column_filter_code_index]
                 if subcodes:
                     for subcode in subcodes:
-                        print subcode
                         code = str(subcode[column_filter_code_index])
                         label = str(subcode[column_filter_label_index])
-                        print code
-                        print label
                         raster_stats = self._get_zonalstat_db(raster_path, srid, sq, db_datasource, layer_code, subcolumn_code, [code], raster_statistics)
                         obj = {"code": code, "label": label, "data": raster_stats}
                         stats.append(obj)
