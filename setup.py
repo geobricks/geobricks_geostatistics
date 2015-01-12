@@ -3,7 +3,7 @@ from setuptools import find_packages
 
 setup(
     name='GeobricksGeostatistics',
-    version='0.1.4',
+    version='0.0.1',
     author='Simone Murzilli; Guido Barbaglia',
     author_email='geobrickspy@gmail.com',
     packages=find_packages(),
@@ -13,8 +13,6 @@ setup(
     install_requires=[
         'flask',
         'flask-cors',
-        #'pygdal', #this will throw an error because is based on the currently installed gdal version
-        # this is not a real dependendency, it's just passed on the method
         'GeobricksCommon',
         'GeobricksGISRaster',
         'GeobricksSpatialQuery',
