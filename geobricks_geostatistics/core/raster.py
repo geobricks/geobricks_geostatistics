@@ -1,7 +1,7 @@
 import os
 import json
 from geobricks_common.core.log import logger
-from geobricks_common.core.filesystem import get_raster_path, get_raster_path_published_by_uid
+from geobricks_common.core.filesystem import get_raster_path
 from geobricks_spatial_query.core.spatial_query_core import SpatialQuery
 from geobricks_gis_raster.core.raster import crop_raster_on_vector_bbox_and_postgis_db, get_statistics, get_srid, get_location_values
 
