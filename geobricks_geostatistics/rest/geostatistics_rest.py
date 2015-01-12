@@ -21,6 +21,16 @@ app = Blueprint("geostatistics", "geostatistics")
 zip_filename = "layers"
 
 
+@app.route('/')
+@cross_origin(origins='*')
+def root():
+    """
+    Root REST service.
+    @return: Welcome message.
+    """
+    return 'Welcome to Geobricks Geostatistics!'
+
+
 @app.route('/discovery/')
 @app.route('/discovery')
 @cross_origin(origins='*')
