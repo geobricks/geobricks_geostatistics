@@ -15,12 +15,6 @@ log = logger(__file__)
 app = Blueprint("geostatistics", "geostatistics")
 
 
-# TODO: How to map it to the download distribution URL? Get the one in the @app.route "/download/"
-#distribution_url = request.host_url + "distribution/download/"
-
-zip_filename = "layers"
-
-
 @app.route('/')
 @cross_origin(origins='*')
 def root():
