@@ -1,2 +1,4 @@
 *.py~
 *.iml
+/GeobricksGeostatistics.egg-info/
+/dist/

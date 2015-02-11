@@ -14,17 +14,9 @@ class Stats():
 
     # default settings
     config = None
-    #db_stats = None
-    #db_spatial = None
 
     def __init__(self, config):
         self.config = config["settings"] if "settings" in config else config
-
-        # db_stats will connect to the database
-        #self.db_stats = _get_default_db("stats", True)
-
-        # db_stats will NOT connect to the database
-        #self.db_spatial = get_default_db(self.settings, "spatial", True)
 
     def zonal_stats(self, json_stats):
         '''
@@ -36,7 +28,8 @@ class Stats():
             raster["path"] = get_raster_path(raster)
             # turning relative to absolute path if required
             if not os.path.isabs(raster["path"]):
-                raster["path"] = os.path.abspath(raster["path"])
+                # this is used to normalize relative path used during test
+                raster["path"] = os.path.normpath(os.path.join(os.path.dirname(__file__), raster["path"]))
 
 
         # Vector
@@ -55,7 +48,6 @@ class Stats():
 
     def get_histogram(self, json_stats):
         return get_statistics(get_raster_path(json_stats["raster"]), json_stats["stats"])
-
 
     def _zonal_stats_by_vector_database(self, rasters, vector, raster_statistics):
 
