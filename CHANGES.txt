@@ -1,2 +1,4 @@
 v0.0.1, 12-01-2015 -- Initial release.
 v0.0.2, 11-02-2015 -- Removed unsed pyproj.
+v0.0.3, 11-02-2015 -- Added multiprocessing.
+v0.0.4, 16-03-2015 -- Added watchdog dependency.

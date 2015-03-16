@@ -4,6 +4,7 @@ from geobricks_common.core.log import logger
 from geobricks_common.core.filesystem import get_raster_path
 from geobricks_spatial_query.core.spatial_query_core import SpatialQuery
 from geobricks_gis_raster.core.raster import crop_raster_on_vector_bbox_and_postgis_db, get_statistics, get_srid, get_location_values
+from multiprocessing import Process, Queue, Pool
 
 # crop_by_vector_database, get_statistics, get_srid, get_histogram, get_nodata_value, get_location_values
 
@@ -30,7 +31,6 @@ class Stats():
             if not os.path.isabs(raster["path"]):
                 # this is used to normalize relative path used during test
                 raster["path"] = os.path.normpath(os.path.join(os.path.dirname(__file__), raster["path"]))
-
 
         # Vector
         # TODO: make an ENUM somewhere (i.e. database, geojson, etc)
@@ -77,25 +77,66 @@ class Stats():
                 # get codes to use
                 db_datasource = vector["db"]
                 layer_code = vector["layer"]
-                column_code = vector["column"]
-                codes = vector["codes"]
+                column_code = vector["column"] if "column" in vector else None
+                codes = vector["codes"] if "codes" in vector else None
                 select = ",".join(vector["groupby"])
                 groupyby = select
                 query = sq.get_query_string_select_all(db_datasource, layer_code, column_code, codes, select, groupyby )
                 subcodes = sq.query_db(vector["db"], query)
 
+                print subcodes
                 # subcolumn_code
+                q = Queue()
+                pool = Pool(2) #use all available cores, otherwise specify the number you want as an argument
+                processes = []
                 subcolumn_code = vector["groupby"][column_filter_code_index]
                 if subcodes:
                     for subcode in subcodes:
                         code = str(subcode[column_filter_code_index])
                         label = str(subcode[column_filter_label_index])
-                        raster_stats = self._get_zonalstat_db(raster_path, srid, sq, db_datasource, layer_code, subcolumn_code, [code], raster_statistics)
-                        obj = {"code": code, "label": label, "data": raster_stats}
-                        stats.append(obj)
+                        print code, label
+                        # raster_stats = pool.map(self.do_process, args=(q, raster_path, srid, sq, db_datasource, layer_code, subcolumn_code, code, label, raster_statistics))
+
+                        # print raster_stats
+                        # obj = {"code": code, "label": label, "data": raster_stats}
+                        # stats.append(obj)
+
+                        processes.append(Process(target=self.do_process, args=(q, raster_path, srid, sq, db_datasource, layer_code, subcolumn_code, code, label, raster_statistics)))
+
+                        # raster_stats = self._get_zonalstat_db(raster_path, srid, sq, db_datasource, layer_code, subcolumn_code, [code], raster_statistics)
+                        # obj = {"code": code, "label": label, "data": raster_stats}
+                        # stats.append(obj)
+
+
+                #Run processes
+                print "PROCESSES"
+                for p in processes:
+                    print p
+                    p.start()
+
+                # Exit the completed processes
+                print "JOIN"
+                for p in processes:
+                    print p
+                    p.join()
+
+                #Get process results from the output queue
+                print "HERE!"
+                print len(processes)
+                print q.get_nowait()
+                for p in processes:
+                    #if q.get():
+                    #print p
+                    try:
+                        stats.append(q.get_nowait())
+                    except Exception, e:
+                        print e
+
+                print "DAJE"
 
             # add to all stats
             all_stats.append(stats)
+        print all_stats
         return all_stats
 
     def _get_zonalstat_db(self, raster_path, srid, sq, db_datasource, layer_code, column_code, codes, raster_statistics):
@@ -116,6 +157,36 @@ class Stats():
             input_files.append(self.get_raster_path(input_layer))
         log.info(input_files)
         return get_location_values(input_files, lat, lon, band)
+
+
+    def do_process(self, q, raster_path,  srid, sq, db_datasource, layer_code, subcolumn_code, code, label, raster_statistics):
+        try:
+            raster_stats = self._get_zonalstat_db(raster_path, srid, sq, db_datasource, layer_code, subcolumn_code, [code], raster_statistics)
+            print "->", code, label
+            obj = {"code": code, "label": label, "data": raster_stats}
+            q.put(obj)
+        except Exception, e:
+            print e
+            pass
+
+
+# def main():
+#     my_list = range(1000000)
+#
+#     q = Queue()
+#
+#     p1 = Process(target=do_sum, args=(q, my_list[:500000]))
+#     p2 = Process(target=do_sum, args=(q, my_list[500000:]))
+#     p1.start()
+#     p2.start()
+#     r1 = q.get()
+#     r2 = q.get()
+#     print r1+r2
+#
+# if __name__=='__main__':
+#     main()
+
+
 
 #     def _zonal_stats_by_vector_database_old(self, json_stats):
 #         # Stats result
