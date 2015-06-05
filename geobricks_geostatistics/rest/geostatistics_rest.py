@@ -45,7 +45,6 @@ def discovery():
 def get_rasters_spatial_query():
     try:
         user_json = request.get_json()
-        #TODO: handle it nicer the url to set the distribution download url
         geostats = Stats(config)
         result = geostats.zonal_stats(user_json)
         return Response(json.dumps(result), content_type='application/json; charset=utf-8')
@@ -59,9 +58,34 @@ def get_rasters_spatial_query():
 def get_pixel_values_post():
     try:
         user_json = request.get_json()
-        #TODO: handle it nicer the url to set the distribution download url
         geostats = Stats(config)
         result = geostats.get_pixel_values_json(user_json)
+        return Response(json.dumps(result), content_type='application/json; charset=utf-8')
+    except Exception, e:
+        raise Exception(e)
+
+
+@app.route('/rasters/stats/', methods=['POST'])
+@app.route('/rasters/stats', methods=['POST'])
+@cross_origin(origins='*', headers=['Content-Type'])
+def get_stats_post():
+    try:
+        user_json = request.get_json()
+        geostats = Stats(config)
+        result = geostats.get_raster_stats_json(user_json)
+        return Response(json.dumps(result), content_type='application/json; charset=utf-8')
+    except Exception, e:
+        raise Exception(e)
+
+
+@app.route('/rasters/histogram/', methods=['POST'])
+@app.route('/rasters/histogram', methods=['POST'])
+@cross_origin(origins='*', headers=['Content-Type'])
+def get_histogram_post():
+    try:
+        user_json = request.get_json()
+        geostats = Stats(config)
+        result = geostats.get_raster_histogram_json(user_json)
         return Response(json.dumps(result), content_type='application/json; charset=utf-8')
     except Exception, e:
         raise Exception(e)

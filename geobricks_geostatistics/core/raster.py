@@ -43,11 +43,26 @@ class Stats():
         # TODO: save stats in case is needed or return statistics
         return None
 
-    def get_stats(self, json_stats):
-        return get_statistics(get_raster_path(json_stats["raster"]))
+    def get_raster_stats_json(self, json_stats):
+        # TODO: how to handle multiple rasters?
+        raster_path = get_raster_path(json_stats["raster"][0])
+        stats = get_statistics(raster_path, json_stats["stats"]["raster_stats"]) if "stats" in json_stats and "raster_stats" in json_stats["stats"] else get_statistics(raster_path)
+        return stats
 
-    def get_histogram(self, json_stats):
-        return get_statistics(get_raster_path(json_stats["raster"]), json_stats["stats"])
+    def get_raster_histogram_json(self, json_stats):
+        # TODO: how to handle multiple rasters?
+        raster_path = get_raster_path(json_stats["raster"][0])
+        stats = {
+            "descriptive_stats": {
+                "force": False
+            },
+            "histogram": {
+                "buckets": 256,
+                "include_out_of_range": 0,
+                "force": True
+            }
+        }
+        return get_statistics(raster_path, stats)
 
     def get_pixel_values_json(self, json_stats):
         return self.get_pixel_values(json_stats["raster"], json_stats["stats"]["pixel"]["lat"], json_stats["stats"]["pixel"]["lon"])
