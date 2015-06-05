@@ -49,6 +49,14 @@ class Stats():
     def get_histogram(self, json_stats):
         return get_statistics(get_raster_path(json_stats["raster"]), json_stats["stats"])
 
+    def get_pixel_values_json(self, json_stats):
+        return self.get_pixel_values(json_stats["raster"], json_stats["stats"]["pixel"]["lat"], json_stats["stats"]["pixel"]["lon"])
+
+    def get_pixel_values(self, rasters, lat, lon):
+        raster_paths = [get_raster_path(x) for x in rasters]
+        return get_location_values(raster_paths, lat, lon)
+
+
     def _zonal_stats_by_vector_database(self, rasters, vector, raster_statistics):
 
         # TODO remove dependency from here?
@@ -150,14 +158,6 @@ class Stats():
         log.info(query)
         filepath = crop_raster_on_vector_bbox_and_postgis_db(raster_path, db_connection_string, query, bbox[0][0], bbox[0][1], bbox[1][0], bbox[1][1])
         return get_statistics(filepath, raster_statistics)
-
-    def get_location_values(self, input_layers, lat, lon, band=None):
-        input_files = []
-        for input_layer in input_layers:
-            input_files.append(self.get_raster_path(input_layer))
-        log.info(input_files)
-        return get_location_values(input_files, lat, lon, band)
-
 
     def do_process(self, q, raster_path,  srid, sq, db_datasource, layer_code, subcolumn_code, code, label, raster_statistics):
         try:
